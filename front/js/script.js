@@ -17,7 +17,7 @@ fetch("http://localhost:3000/api/products")
  * @param {canapes} Object 
  *  */    
 const products = (canapes) => {
-    let articles = document.getElementById("items");
+    const articles = document.getElementById("items");
     let listArticles = "";
     for(canape of canapes){
         let image = canape.imageUrl;
