@@ -1,14 +1,14 @@
 // fetches datas from API
 fetch("http://localhost:3000/api/products")
-    .then(function(res){
+    .then ((res)=>{
         if (res.ok){
             return res.json()
         }
     })
-    .then (function(value){
+    .then ((value)=>{
         products(value)
     })
-    .catch(function(err){
+    .catch((err)=>{
         console.log(err)
     });
 
