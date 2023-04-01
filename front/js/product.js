@@ -77,19 +77,18 @@ mybutton.addEventListener('click', panier =>{
                     let nombre=Number(objJson[i].quantite);
                     nombre+=quantite;
                     objJson[i].quantite=nombre;
-                    identiques=1;
                     objLinea=JSON.stringify(objJson);
                     localStorage.setItem("canapes",objLinea);
-                    return identiques;
+                    window.location.href=urlPanier;  
+                    return;
                 }
             }
-            if (identiques==0){
-                objJson.push(canape);
-                objLinea=JSON.stringify(objJson);
-                localStorage.setItem("canapes",objLinea);
-            }
+            objJson.push(canape);
+            objLinea=JSON.stringify(objJson);
+            localStorage.setItem("canapes",objLinea);
+            
         } 
-    }   
-window.location.href=urlPanier;     
+    }  
+window.location.href=urlPanier; 
 }
 );
