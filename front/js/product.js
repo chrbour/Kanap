@@ -1,6 +1,7 @@
 let str = document.location.href;
 let url = new URL(str);
 let recupId = url.searchParams.get("id");
+let urlPanier=url.origin+"/front/html/cart.html";
 
 // fetches datas from API of the specified id
 fetch(`http://localhost:3000/api/products/${recupId}`)
@@ -10,7 +11,6 @@ fetch(`http://localhost:3000/api/products/${recupId}`)
         }
     })
     .then ((value)=>{
-        console.log(value);
         product(value);
     })
     .catch((err)=>{
@@ -32,20 +32,11 @@ const product = (canape) =>{
     const titre=document.getElementById('title');
     const prix=document.getElementById('price');
     const texte=document.getElementById('description');
+    const couleurCanape = document.getElementById('colors');
     photo[0].innerHTML=`<img src="${image}" alt="${altImage}">`;
     titre.innerHTML=name;
     prix.innerHTML=price;
     texte.innerHTML=description;
-    console.log(image,altImage, name,description,price,couleurs);
-    colorCanape(couleurs);
-}
-
-/**
- * Defines the list of available colors
- * @param {couleurs} array
- */
-const colorCanape=(couleurs)=>{
-    const couleurCanape = document.getElementById('colors');
     for (couleur of couleurs){
         let newOption=document.createElement('option');
         newOption.value=couleur;
@@ -54,12 +45,13 @@ const colorCanape=(couleurs)=>{
     }
 }
 
+// Check quantity, color and push it in the cart
 const mybutton=document.querySelector('button');
 mybutton.addEventListener('click', panier =>{
-    let id=canape._id;
+    let id=recupId;
     let quantite=document.getElementById('quantity').value;
+    quantite=Number(quantite);
     let couleur=document.getElementById('colors').value;
-    
     if (quantite==0 || couleur==""){
         alert("La couleur ET le nombre d'articles doivent être renseignés.");
         document.removeEventListener('click',panier);
@@ -67,20 +59,37 @@ mybutton.addEventListener('click', panier =>{
     else{
         let objLinea=localStorage.getItem("canapes");
         let objJson=JSON.parse(objLinea);
-        console.log(objJson);
-        let produit=[];
-        if (objJson!=null){
-            produit.push(objJson);
-        }
         let canape={
             id: id,
             quantite: quantite,
             couleur: couleur
         }
-        produit.push(canape);
-        console.log(produit);
-        objLinea=JSON.stringify(produit);
-        localStorage.setItem("canapes",objLinea)
-    } 
+        if (objJson==null){
+            let produit=[];
+            produit.push(canape);
+            objLinea=JSON.stringify(produit);
+            localStorage.setItem("canapes",objLinea);
+        }
+        else{
+            let identiques=0;
+            for (let i in objJson){
+                if (objJson[i].id===id && objJson[i].couleur===couleur){
+                    let nombre=Number(objJson[i].quantite);
+                    nombre+=quantite;
+                    objJson[i].quantite=nombre;
+                    identiques=1;
+                    objLinea=JSON.stringify(objJson);
+                    localStorage.setItem("canapes",objLinea);
+                    return identiques;
+                }
+            }
+            if (identiques==0){
+                objJson.push(canape);
+                objLinea=JSON.stringify(objJson);
+                localStorage.setItem("canapes",objLinea);
+            }
+        } 
+    }   
+window.location.href=urlPanier;     
 }
 );
