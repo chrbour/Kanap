@@ -55,6 +55,7 @@ mybutton.addEventListener('click', panier =>{
     if (quantite==0 || couleur==""){
         alert("La couleur ET le nombre d'articles doivent être renseignés.");
         document.removeEventListener('click',panier);
+        location.reload();
     }
     else{
         let objLinea=localStorage.getItem("canapes");
@@ -71,7 +72,6 @@ mybutton.addEventListener('click', panier =>{
             localStorage.setItem("canapes",objLinea);
         }
         else{
-            let identiques=0;
             for (let i in objJson){
                 if (objJson[i].id===id && objJson[i].couleur===couleur){
                     let nombre=Number(objJson[i].quantite);
@@ -79,16 +79,15 @@ mybutton.addEventListener('click', panier =>{
                     objJson[i].quantite=nombre;
                     objLinea=JSON.stringify(objJson);
                     localStorage.setItem("canapes",objLinea);
-                    window.location.href=urlPanier;  
+                    window.location.href=urlPanier;
                     return;
                 }
             }
             objJson.push(canape);
             objLinea=JSON.stringify(objJson);
             localStorage.setItem("canapes",objLinea);
-            
         } 
-    }  
-window.location.href=urlPanier; 
+        window.location.href=urlPanier;
+    }   
 }
 );
