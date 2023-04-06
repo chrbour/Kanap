@@ -4,9 +4,12 @@ let panier=JSON.parse(objLinea);
 const affichagePanier=document.getElementById("cart__items");
 const inputQuantite=document.getElementsByClassName('itemQuantity');
 const suppression=document.getElementsByClassName('deleteItem');
+const prenom=document.getElementById('firstName');
+const nom=document.getElementById('lastName');
+const adresse=document.getElementById('address');
+const ville=document.getElementById('city');
+const email=document.getElementById('email');
 let sectionContent="";
-let quantiteTotal=0;
-let prixTotal=0;
 
 
 fetch(`http://localhost:3000/api/products/`)   // Recherche les produits du site
@@ -16,18 +19,15 @@ fetch(`http://localhost:3000/api/products/`)   // Recherche les produits du site
     }
 })
 .then ((value) => {
-    console.log(value);
     affichage(value);         // Affichage du panier, calcul du nombre d'éléments et du prix total
     modifPanier(value);      // Modification du panier
-    eraseElement(value);
-    calcul(value);           
+    eraseElement(value);     // Suppression d'éléments du panier
+    calcul(value);           // Calcule le nombre d'éléments dan sle panier et le prix total
 })
 .catch((err) => {
 console.log(err);
 })
-.finally(() => {                       
-    console.log('finalement');
-    
+.finally(() => {                        
 }
 );
     
@@ -37,31 +37,24 @@ console.log(err);
  */
 const modifPanier = (catalogue) => {
     for (i=0;i<inputQuantite.length;i++){
-        inputQuantite[i].addEventListener('change',(modif)=>{
-            console.log('Quantité OK');
-            
+        inputQuantite[i].addEventListener('change',(modif)=>{          
             let elToModificateId = modif.target.closest('article').dataset.id;
             let elToModificateColor = modif.target.closest('article').dataset.color;
-            console.log("id:",elToModificateId,"couleur:",elToModificateColor);
             for (canape of panier){
                 if (canape.id===elToModificateId && canape.couleur===elToModificateColor){
                     if ( modif.target.value<=0 || modif.target.value>100){
-                        alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100");
+                        alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100.");
                         location.reload();
                     }
                     else{
                         canape.quantite=modif.target.value;
-                        console.log("trouvé:",canape);
                         objLinea=JSON.stringify(panier);
                         localStorage.setItem("canapes",objLinea);
                     }
                 }
             }
-           /*document.getElementById('totalQuantity').innerHTML=quantiteTotal;
-            document.getElementById('totalPrice').innerHTML=prixTotal;*/
             calcul(catalogue);
-        });
-        
+        }); 
     }
 }
  
@@ -71,19 +64,12 @@ const modifPanier = (catalogue) => {
 const eraseElement = (catalogue) => {
     for (let i in panier){
         suppression[i].addEventListener('click',(sel)=>{
-            console.log('Suppression OK',panier);
-            
-            
-            
             panier.splice(i,1);
-            console.log('panier',panier,'supp:');
             let elToModificate= sel.target.closest('#cart__items');
             elToModificate.innerHTML="";
-            console.log("id:",elToModificate);
             objLinea=JSON.stringify(panier);
             localStorage.setItem("canapes",objLinea);
             location.reload();
-            affichage(catalogue);
         });
     }
 }
@@ -96,7 +82,6 @@ const affichage=(catalogue)=>{
     for(let canape of panier){
         for(let detail of catalogue){
             if (detail._id==canape.id){
-                console.log("id:",canape.id, "nom:",detail.name,"couleur:",canape.couleur,"quantité:",canape.quantite,"prix:",detail.price);
                 sectionContent+=`<article class="cart__item" data-id="${canape.id}" data-color="${canape.couleur}">
                                     <div class="cart__item__img">
                                         <img src="${detail.imageUrl}" alt="Photographie d'un canapé";
@@ -118,23 +103,20 @@ const affichage=(catalogue)=>{
                                         </div>
                                     </div>    
                                 </article>`;
-                /*quantiteTotal+=Number(canape.quantite);
-                prixTotal+=Number(canape.quantite)*Number(detail.price);*/
             }
         }
     }
     affichagePanier.innerHTML=sectionContent;
     calcul(catalogue);
-    /*document.getElementById("totalQuantity").innerHTML=quantiteTotal;
-    document.getElementById("totalPrice").innerHTML=prixTotal;*/
 }
 
 /**
  * Calculate quantity and price
+ * @param {catalogue} Objet
  */
 const calcul = (catalogue) => {
     quantiteTotal=0;
-    prixTotal=0
+    prixTotal=0;
     for(let canape of panier){
         for(let detail of catalogue){
             if (detail._id==canape.id){
@@ -146,3 +128,72 @@ const calcul = (catalogue) => {
     document.getElementById("totalQuantity").innerHTML=quantiteTotal;
     document.getElementById("totalPrice").innerHTML=prixTotal;
 }
+
+// Checking user's informations
+let regexText=/[\.;,?/:§*+=!%ùç*µ£$&~"#{([_|`@\])}0-9]/g;
+let regexAdresse=/[?§*+=!%ùç*µ£$&~"_#{[|`@\]}]/g;
+let regexEmail=/[@]/g;
+let prenomERR=0;
+let nomERR=0;
+let adresseERR=0;
+let villeERR=0;
+let emailERR=0;
+prenom.addEventListener('change',(modif)=>{
+    if (modif.target.value.match(regexText)!=null){
+        document.getElementById('firstNameErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux ni de chiffres.";
+        prenomERR=1;
+    }
+    else {
+        document.getElementById('firstNameErrorMsg').innerHTML="";
+    }
+}
+);
+nom.addEventListener('change',(modif)=>{
+    if (modif.target.value.match(regexText)!=null){
+        document.getElementById('lastNameErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux ni de chiffres.";
+        nomERR=1;
+    }
+    else {
+        document.getElementById('lastNameErrorMsg').innerHTML="";
+    }
+}
+);
+adresse.addEventListener('change',(modif)=>{
+    if (modif.target.value.match(regexAdresse)!=null){
+        document.getElementById('addressErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux ni de chiffres.";
+        adresseERR=1;
+    }
+    else {
+        document.getElementById('addressErrorMsg').innerHTML="";
+    }
+}
+);
+ville.addEventListener('change',(modif)=>{
+    if (modif.target.value.match(regexText)!=null){
+        document.getElementById('cityErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux ni de chiffres.";
+        villeERR=1;
+    }
+    else {
+        document.getElementById('cityErrorMsg').innerHTML="";
+    }
+}
+);
+email.addEventListener('change',(modif)=>{
+    if (modif.target.value.match(regexEmail)==null && modif.target.value!=""){
+        document.getElementById('emailErrorMsg').innerHTML="Erreur: Renseigner une adresse mail.";
+        emailERR=1;
+    }
+    else {
+        document.getElementById('emailErrorMsg').innerHTML="";
+    }
+}
+);
+if (prenomERR+nomERR+adresseERR+villeERR+emailERR>0){
+    document.getElementById('order').type="";
+    console.log('pb');
+}
+else {
+    document.getElementById('order').type="submit";
+    console.log('pas pb');
+}
+console.log(prenomERR+nomERR+adresseERR+villeERR+emailERR);

@@ -52,10 +52,15 @@ mybutton.addEventListener('click', panier =>{
     let quantite=document.getElementById('quantity').value;
     quantite=Number(quantite);
     let couleur=document.getElementById('colors').value;
-    if (quantite==0 || couleur==""){
-        alert("La couleur ET le nombre d'articles doivent être renseignés.");
+    if (couleur==""){
+        alert("Erreur: La couleur doit être renseignée.");
         document.removeEventListener('click',panier);
         location.reload();
+    }
+    else if (quantite<=0 || quantite>100){
+            alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100.");
+            document.removeEventListener('click',panier);
+            location.reload();
     }
     else{
         let objLinea=localStorage.getItem("canapes");
