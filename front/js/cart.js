@@ -9,8 +9,9 @@ const nom=document.getElementById('lastName');
 const adresse=document.getElementById('address');
 const ville=document.getElementById('city');
 const email=document.getElementById('email');
+const bouton= document.getElementById('order');
 let sectionContent="";
-
+bouton.disabled=true;
 
 fetch(`http://localhost:3000/api/products/`)   // Recherche les produits du site
 .then ((res) => {
@@ -70,7 +71,7 @@ const eraseElement = (catalogue) => {
             objLinea=JSON.stringify(panier);
             localStorage.setItem("canapes",objLinea);
             affichage(catalogue);
-            return; //location.reload();
+            location.reload();
         });
     }
 }
@@ -165,7 +166,7 @@ nom.addEventListener('change',(modif)=>{
 );
 adresse.addEventListener('change',(modif)=>{
     if (modif.target.value.match(regexAdresse)!=null){
-        document.getElementById('addressErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux ni de chiffres.";
+        document.getElementById('addressErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux.";
         adresseERR=1;
     }
     else {
@@ -212,3 +213,49 @@ const verifFormulaire = () =>{
         console.log('pas pb');
     }
 }
+;
+bouton.addEventListener('click',(e) => {console.log("envoi");
+    
+    e.preventDefault();envoiCommande();
+});
+console.log(window.location.href);
+
+const envoiCommande = () => {
+    let produits=[];
+    for (Kanap of panier){
+        
+        produits.push(Kanap.id);
+        }
+    let commande={
+        contact:{
+            firstName: prenom.value,
+            lastName: nom.value,
+            address: adresse.value,
+            city: ville.value,
+            email: email.value,
+            },
+        products: produits
+    }
+        
+        console.log("commande:",commande);
+    fetch(`http://localhost:3000/api/products/order`,{
+        method:'POST',
+        headers: {
+            "Accept": "application/json",
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(commande)
+    })
+    .then((res)=> {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((value) =>{
+          console.log("value:",value);
+          window.location.href=`./confirmation.html?orderId=${value.orderId}`
+      });console.log("contact+produits:",commande);
+    //;
+}
+    //objLinea=JSON.stringify(commande);
+    //localStorage.setItem("commande",objLinea)
