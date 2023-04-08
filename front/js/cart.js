@@ -22,7 +22,7 @@ fetch(`http://localhost:3000/api/products/`)   // Recherche les produits du site
     affichage(value);         // Affichage du panier, calcul du nombre d'éléments et du prix total
     modifPanier(value);      // Modification du panier
     eraseElement(value);     // Suppression d'éléments du panier
-    calcul(value);           // Calcule le nombre d'éléments dan sle panier et le prix total
+    calcul(value);           // Calcule le nombre d'éléments dans le panier et le prix total
 })
 .catch((err) => {
 console.log(err);
@@ -44,7 +44,7 @@ const modifPanier = (catalogue) => {
                 if (canape.id===elToModificateId && canape.couleur===elToModificateColor){
                     if ( modif.target.value<=0 || modif.target.value>100){
                         alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100.");
-                        location.reload();
+                        return;//location.reload();
                     }
                     else{
                         canape.quantite=modif.target.value;
@@ -69,7 +69,8 @@ const eraseElement = (catalogue) => {
             elToModificate.innerHTML="";
             objLinea=JSON.stringify(panier);
             localStorage.setItem("canapes",objLinea);
-            location.reload();
+            affichage(catalogue);
+            return; //location.reload();
         });
     }
 }
@@ -132,7 +133,7 @@ const calcul = (catalogue) => {
 // Checking user's informations
 let regexText=/[\.;,?/:§*+=!%ùç*µ£$&~"#{([_|`@\])}0-9]/g;
 let regexAdresse=/[?§*+=!%ùç*µ£$&~"_#{[|`@\]}]/g;
-let regexEmail=/[@]/g;
+let regexEmail=/[a-zA-Z0-9]+[@][a-zA-Z0-9]+[\.][a-zA-Z]{2,3}/g;
 let prenomERR=0;
 let nomERR=0;
 let adresseERR=0;
@@ -145,7 +146,9 @@ prenom.addEventListener('change',(modif)=>{
     }
     else {
         document.getElementById('firstNameErrorMsg').innerHTML="";
+        prenomERR=0;
     }
+    verifFormulaire();
 }
 );
 nom.addEventListener('change',(modif)=>{
@@ -155,7 +158,9 @@ nom.addEventListener('change',(modif)=>{
     }
     else {
         document.getElementById('lastNameErrorMsg').innerHTML="";
+        nomERR=0;
     }
+    verifFormulaire();
 }
 );
 adresse.addEventListener('change',(modif)=>{
@@ -165,7 +170,9 @@ adresse.addEventListener('change',(modif)=>{
     }
     else {
         document.getElementById('addressErrorMsg').innerHTML="";
+        adresseERR=0;
     }
+    verifFormulaire();
 }
 );
 ville.addEventListener('change',(modif)=>{
@@ -175,7 +182,9 @@ ville.addEventListener('change',(modif)=>{
     }
     else {
         document.getElementById('cityErrorMsg').innerHTML="";
+        villeERR=0;
     }
+    verifFormulaire();
 }
 );
 email.addEventListener('change',(modif)=>{
@@ -185,15 +194,21 @@ email.addEventListener('change',(modif)=>{
     }
     else {
         document.getElementById('emailErrorMsg').innerHTML="";
+        emailERR=0;
     }
+    verifFormulaire();
 }
 );
-if (prenomERR+nomERR+adresseERR+villeERR+emailERR>0){
-    document.getElementById('order').type="";
+
+
+const verifFormulaire = () =>{
+    console.log(prenomERR+nomERR+adresseERR+villeERR+emailERR);
+    if (prenomERR+nomERR+adresseERR+villeERR+emailERR>0){
+    document.getElementById('order').disabled=true;
     console.log('pb');
+    }
+    else {
+        document.getElementById('order').disabled=false;
+        console.log('pas pb');
+    }
 }
-else {
-    document.getElementById('order').type="submit";
-    console.log('pas pb');
-}
-console.log(prenomERR+nomERR+adresseERR+villeERR+emailERR);

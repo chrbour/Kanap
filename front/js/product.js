@@ -81,10 +81,14 @@ mybutton.addEventListener('click', panier =>{
                 if (objJson[i].id===id && objJson[i].couleur===couleur){
                     let nombre=Number(objJson[i].quantite);
                     nombre+=quantite;
-                    objJson[i].quantite=nombre;
-                    objLinea=JSON.stringify(objJson);
-                    localStorage.setItem("canapes",objLinea);
-                    window.location.href=urlPanier;
+                    if (nombre<1 || nombre>100){
+                        alert(`Erreur:\nLe nombre maximal de canapés pour chaque type/couleur ne peut dépasser 100.\nLe panier contient déjà ${objJson[i].quantite} canapés de ce type, de couleur ${couleur}.`);
+                    }
+                    else {
+                        objJson[i].quantite=nombre;
+                        objLinea=JSON.stringify(objJson);
+                        localStorage.setItem("canapes",objLinea);
+                    }
                     return;
                 }
             }
@@ -92,7 +96,6 @@ mybutton.addEventListener('click', panier =>{
             objLinea=JSON.stringify(objJson);
             localStorage.setItem("canapes",objLinea);
         } 
-        window.location.href=urlPanier;
     }   
 }
 );
