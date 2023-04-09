@@ -201,29 +201,23 @@ email.addEventListener('change',(modif)=>{
 }
 );
 
-
 const verifFormulaire = () =>{
-    console.log(prenomERR+nomERR+adresseERR+villeERR+emailERR);
     if (prenomERR+nomERR+adresseERR+villeERR+emailERR>0){
     document.getElementById('order').disabled=true;
-    console.log('pb');
     }
     else {
         document.getElementById('order').disabled=false;
-        console.log('pas pb');
     }
 }
 ;
-bouton.addEventListener('click',(e) => {console.log("envoi");
-    
-    e.preventDefault();envoiCommande();
+bouton.addEventListener('click',(e) => {
+    e.preventDefault();
+    envoiCommande();
 });
-console.log(window.location.href);
 
 const envoiCommande = () => {
     let produits=[];
     for (Kanap of panier){
-        
         produits.push(Kanap.id);
         }
     let commande={
@@ -236,8 +230,6 @@ const envoiCommande = () => {
             },
         products: produits
     }
-        
-        console.log("commande:",commande);
     fetch(`http://localhost:3000/api/products/order`,{
         method:'POST',
         headers: {
@@ -252,10 +244,7 @@ const envoiCommande = () => {
         }
       })
       .then((value) =>{
-          console.log("value:",value);
+          localStorage.clear();
           window.location.href=`./confirmation.html?orderId=${value.orderId}`
-      });console.log("contact+produits:",commande);
-    //;
+      });
 }
-    //objLinea=JSON.stringify(commande);
-    //localStorage.setItem("commande",objLinea)

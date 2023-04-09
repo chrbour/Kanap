@@ -55,12 +55,14 @@ mybutton.addEventListener('click', panier =>{
     if (couleur==""){
         alert("Erreur: La couleur doit être renseignée.");
         document.removeEventListener('click',panier);
-        location.reload();
+        document.getElementById('quantity').value="0";
+        return;
     }
     else if (quantite<=0 || quantite>100){
             alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100.");
             document.removeEventListener('click',panier);
-            location.reload();
+            document.getElementById('colors').selectedIndex=0;
+            return;
     }
     else{
         let objLinea=localStorage.getItem("canapes");
@@ -82,19 +84,27 @@ mybutton.addEventListener('click', panier =>{
                     let nombre=Number(objJson[i].quantite);
                     nombre+=quantite;
                     if (nombre<1 || nombre>100){
-                        alert(`Erreur:\nLe nombre maximal de canapés pour chaque type/couleur ne peut dépasser 100.\nLe panier contient déjà ${objJson[i].quantite} canapés de ce type, de couleur ${couleur}.`);
+                        alert(`Erreur:\nLe nombre maximal de canapés pour chaque type/couleur ne peut dépasser 100.\nLe panier contient déjà ${objJson[i].quantite} canapé(s) de ce type, de couleur ${couleur}.`);
+                        document.getElementById('colors').selectedIndex=0;
+                        document.getElementById('quantity').value="0";
                     }
                     else {
+                        alert(`Ajout de ${canape.quantite} canapé(s) ${couleur} dans le panier.\nIl y en a maintenant ${nombre}.`);
+                        document.getElementById('colors').selectedIndex=0;
                         objJson[i].quantite=nombre;
                         objLinea=JSON.stringify(objJson);
                         localStorage.setItem("canapes",objLinea);
+                        document.getElementById('quantity').value="0";
                     }
                     return;
                 }
             }
             objJson.push(canape);
+            alert(`Ajout de ${canape.quantite} canapé(s) ${canape.couleur} dans le panier.`);
+            document.getElementById('colors').selectedIndex=0;
             objLinea=JSON.stringify(objJson);
             localStorage.setItem("canapes",objLinea);
+            document.getElementById('quantity').value="0";
         } 
     }   
 }
