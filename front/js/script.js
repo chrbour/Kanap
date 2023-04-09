@@ -9,7 +9,7 @@ fetch("http://localhost:3000/api/products")
         products(value)
     })
     .catch((err)=>{
-        console.log(err)
+        alert("Impossible de communiquer avec l'API.\nVérifier que le port 3000 est activé.")
     });
 
 /**

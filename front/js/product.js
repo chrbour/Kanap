@@ -45,7 +45,7 @@ const product = (canape) =>{
     }
 }
 
-// Check quantity, color and push it in the cart
+// Check color, quantity and push it in the cart
 const mybutton=document.querySelector('button');
 mybutton.addEventListener('click', panier =>{
     let id=recupId;
