@@ -62,6 +62,7 @@ mybutton.addEventListener('click', panier =>{
             alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100.");
             document.removeEventListener('click',panier);
             document.getElementById('colors').selectedIndex=0;
+            document.getElementById('quantity').value="0";
             return;
     }
     else{

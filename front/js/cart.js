@@ -2,6 +2,10 @@
 let objLinea=localStorage.getItem("canapes");
 let panier=JSON.parse(objLinea);
 let sectionContent="";
+let quantiteTotal=0;
+let quantiteERR=0;
+let prixTotal=0;
+
 const affichagePanier=document.getElementById("cart__items");
 const inputQuantite=document.getElementsByClassName('itemQuantity');
 const suppression=document.getElementsByClassName('deleteItem');
@@ -17,7 +21,7 @@ bouton.disabled=true;
 fetch(`http://localhost:3000/api/products/`)   // Recherche les produits du site
 .then ((res) => {
     if (res.ok){
-        return res.json()
+        return res.json();
     }
 })
 .then ((value) => {
@@ -29,9 +33,6 @@ fetch(`http://localhost:3000/api/products/`)   // Recherche les produits du site
 .catch((err) => {
 console.log(err.message);
 })
-.finally(() => {                        
-}
-);
 
 /**
  * Writes HTML for each product in the cart
@@ -82,6 +83,7 @@ const modifPanier = (catalogue) => {
                 if (canape.id===elToModificateId && canape.couleur===elToModificateColor){
                     if ( modif.target.value<=0 || modif.target.value>100){
                         alert("Erreur: Le nombre de canapes doit être compris entre 1 et 100.");
+                        modif.target.value=canape.quantite;
                         return;
                     }
                     else{
@@ -101,14 +103,14 @@ const modifPanier = (catalogue) => {
  */
 const eraseElement = (catalogue) => {
     for (let i in panier){
-        suppression[i].addEventListener('click',(sel)=>{
-            panier.splice(i,1);console.log(i,panier);
+            suppression[i].addEventListener('click',(sel)=>{
+            panier.splice(i,1);
             let elToModificate= sel.target.closest('#cart__items');
             elToModificate.innerHTML="";
             objLinea=JSON.stringify(panier);
             localStorage.setItem("canapes",objLinea);
             sectionContent="";
-            location.reload();
+            window.location.reload();
         });
     }
 }
@@ -130,13 +132,16 @@ const calcul = (catalogue) => {
     }
     document.getElementById("totalQuantity").innerHTML=quantiteTotal;
     document.getElementById("totalPrice").innerHTML=prixTotal;
+    if(quantiteTotal==0){
+        quantiteERR=1;
+    }
 }
 
 /**
  * Function checking the form to unable the button click
  */
 const verifFormulaire = () =>{
-    if (prenomERR+nomERR+adresseERR+villeERR+emailERR>0){
+    if (prenomERR+nomERR+adresseERR+villeERR+emailERR+quantiteERR>0){
     document.getElementById('order').disabled=true;
     }
     else {
@@ -177,7 +182,7 @@ const envoiCommande = () => {
       })
       .then((value) =>{
           localStorage.clear();
-          window.location.href=`./confirmation.html?orderId=${value.orderId}`
+          window.location.href=`./confirmation.html?orderId=${value.orderId}`;
       });
 }
 
@@ -191,6 +196,7 @@ let nomERR=0;
 let adresseERR=0;
 let villeERR=0;
 let emailERR=0;
+
 prenom.addEventListener('change',(modif)=>{
     if (modif.target.value.match(regexText)!=null){
         document.getElementById('firstNameErrorMsg').innerHTML="Erreur: Ne doit pas contenir de caractères spéciaux ni de chiffres.";
