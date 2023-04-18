@@ -42,27 +42,28 @@ const affichage=(catalogue)=>{
     for(let canape of panier){
         for(let detail of catalogue){
             if (detail._id==canape.id){
-                sectionContent+=`<article class="cart__item" data-id="${canape.id}" data-color="${canape.couleur}">
-                                    <div class="cart__item__img">
-                                        <img src="${detail.imageUrl}" alt="Photographie d'un canapé";
-                                    </div>
-                                    <div class="cart__item_content">
-                                        <div class="cart__item__content__description">
-                                            <h2>${detail.name}</h2>
-                                            <p>${canape.couleur}</p>
-                                            <p>${detail.price} €</p>
-                                        </div>
-                                        <div class="cart__item__content__settings">
-                                            <div class="cart__item__content__settings__quantity">
-                                                <p>Quantité: </p>
-                                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${canape.quantite}>
-                                            </div>
-                                            <div class="cart__item__content__settings__delete">
-                                                <p class="deleteItem">Supprimer</p>
-                                            </div>
-                                        </div>
-                                    </div>    
-                                </article>`;
+                sectionContent+=`
+                <article class="cart__item" data-id="${canape.id}" data-color="${canape.couleur}">
+                    <div class="cart__item__img">
+                        <img src="${detail.imageUrl}" alt="Photographie d'un canapé">
+                    </div>
+                    <div class="cart__item__content">
+                        <div class="cart__item__content__description">
+                            <h2>${detail.name}</h2>
+                            <p>${canape.couleur}</p>
+                            <p>${detail.price} €</p>
+                        </div>
+                        <div class="cart__item__content__settings">
+                            <div class="cart__item__content__settings__quantity">
+                                <p>Qté : </p>
+                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${canape.quantite}">
+                            </div>
+                            <div class="cart__item__content__settings__delete">
+                                <p class="deleteItem">Supprimer</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>`;
             }
         }
     }
@@ -103,17 +104,21 @@ const modifPanier = (catalogue) => {
  */
 const eraseElement = (catalogue) => {
     for (let i in panier){
-            suppression[i].addEventListener('click',(sel)=>{
-            panier.splice(i,1);
-            let elToModificate= sel.target.closest('#cart__items');
-            elToModificate.innerHTML="";
-            objLinea=JSON.stringify(panier);
-            localStorage.setItem("canapes",objLinea);
-            sectionContent="";
-            window.location.reload();
-        });
+            suppression[i].addEventListener('click',sel=>{
+                let elToModificate = sel.target.closest(".cart__item");
+                for (let j in panier){
+                    if (panier[j].couleur==elToModificate.dataset.color && panier[j].id==elToModificate.dataset.id){
+                        panier.splice(j,1);
+                    }
+                }
+                objLine=JSON.stringify(panier);
+                localStorage.setItem("canapes",objLine);
+                elToModificate.remove();
+                calcul(catalogue);
+            })
+        };
     }
-}
+
 
 /**
  * Calculates quantity and price
