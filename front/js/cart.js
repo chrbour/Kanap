@@ -107,7 +107,8 @@ const eraseElement = (catalogue) => {
             suppression[i].addEventListener('click',sel=>{
                 let elToModificate = sel.target.closest(".cart__item");
                 for (let j in panier){
-                    if (panier[j].couleur==elToModificate.dataset.color && panier[j].id==elToModificate.dataset.id){
+                    if (panier[j].couleur==elToModificate.dataset.color 
+                        && panier[j].id==elToModificate.dataset.id){
                         panier.splice(j,1);
                     }
                 }
@@ -118,7 +119,6 @@ const eraseElement = (catalogue) => {
             })
         };
     }
-
 
 /**
  * Calculates quantity and price
@@ -190,7 +190,6 @@ const envoiCommande = () => {
           window.location.href=`./confirmation.html?orderId=${value.orderId}`;
       });
 }
-
 
 // Checking user's informations
 let regexText=/[\.;,?/:§*+=!%ùç*µ£$&~"#{([_|`@\])}0-9]/g;

@@ -2,14 +2,14 @@
 fetch("http://localhost:3000/api/products")
     .then ((res)=>{
         if (res.ok){
-            return res.json()
+            return res.json();
         }
     })
     .then ((value)=>{
-        products(value)
+        products(value);
     })
     .catch((err)=>{
-        alert("Impossible de communiquer avec l'API.\nVérifier que le port 3000 est activé.")
+        console.log(err.message);
     });
 
 /**

@@ -1,7 +1,6 @@
 let str = document.location.href;
 let url = new URL(str);
 let recupId = url.searchParams.get("id");
-let urlPanier=url.origin+"/front/html/cart.html";
 
 // fetches datas from API of the specified id
 fetch(`http://localhost:3000/api/products/${recupId}`)
