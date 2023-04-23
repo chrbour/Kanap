@@ -101,6 +101,7 @@ const modifPanier = (catalogue) => {
  
 /**
  * Erases elements in the cart
+ * @param {catalogue} Objet
  */
 const eraseElement = (catalogue) => {
     for (let i in panier){
